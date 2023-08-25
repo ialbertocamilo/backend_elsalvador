@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -16,31 +17,28 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'membership_date' => 'required|date',
             'project_name' => 'required',
             'owner_name' => 'required',
             'designer_name' => 'required',
-            'project_director' => 'required',
-            'address' => 'required',
-            'city' => 'required',
+            'project_director' => 'required'
         ]);
+        $response=Auth::user()->project()->create($request->all());
 
-        $project = Project::create($request->all());
-
-        return response()->json(['data' => $project], 201);
+        return response()->json(['data' => $response], 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Project  $project
+     * @param \App\Models\Project $project
+     *
      * @return \Illuminate\Http\Response
      */
     public function show(Project $project)
@@ -51,8 +49,9 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  $project
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Project      $project
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Project $project)
@@ -76,7 +75,8 @@ class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Project  $project
+     * @param \App\Models\Project $project
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy(Project $project)

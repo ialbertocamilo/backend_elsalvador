@@ -24,4 +24,4 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/verify-token', [AuthController::class, 'verify'])->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register']);
-Route::apiResource('projects', ProjectController::class);
+Route::apiResource('projects', ProjectController::class)->middleware('auth:sanctum');
