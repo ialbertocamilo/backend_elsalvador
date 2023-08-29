@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -9,9 +10,9 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::all();
+        $projects = Project::paginate(15);
 
-        return response()->json(['data' => $projects]);
+        return response()->json($projects);
     }
 
     /**
@@ -43,7 +44,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return response()->json(['data' => $project]);
+        return response()->json($project);
     }
 
     /**
