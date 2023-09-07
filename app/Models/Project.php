@@ -15,4 +15,8 @@ class Project extends Model
     function user(){
         return $this->belongsTo(User::class);
     }
+
+    function data(){
+        return $this->hasMany(Data::class);
+    }
 }

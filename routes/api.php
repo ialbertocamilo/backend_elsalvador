@@ -22,6 +22,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/verify-token', [AuthController::class, 'verify'])->middleware('auth:sanctum');
+Route::get('/verify-token', [AuthController::class, 'verify'])->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register']);
 Route::apiResource('projects', ProjectController::class)->middleware('auth:sanctum');
+Route::group(['prefix' => 'projects', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/get-data', [\App\Http\Controllers\ProjectController::class, 'getProjectData']);
+    Route::post('/save-data', [\App\Http\Controllers\ProjectController::class, 'saveProjectData']);
+});
+Route::apiResource('data', \App\Http\Controllers\DataController::class)->middleware('auth:sanctum');

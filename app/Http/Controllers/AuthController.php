@@ -35,7 +35,7 @@ class AuthController extends Controller
     public function verify(Request $request){
         $user = $request->user();
 
-        return response()->json(['user' => $user], 200);
+        return response()->json(['user' => $user]);
     }
 
     public function test(Request $request)
