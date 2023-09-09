@@ -15,13 +15,13 @@ jobs:
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: '8.1'
-            -   name: Speed up the packages installation process
-                run: composer global require hirak/prestissimo
             -   name: Install Packages
                 run: composer install --no-dev
             -   name: Deploy to Server
                 run: |
                   ssh-keyscan -h 3.93.57.139 >> ~/.ssh/known_hosts
-                  ssh bitnami@3.93.57.139 "~/htdocs/backend_elsalvador && git pull origin main
+                  ssh bitnami@3.93.57.139 "cd ~/htdocs/backend_elsalvador && git pull origin main"
+
+
                 env:
                     DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
