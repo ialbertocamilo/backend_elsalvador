@@ -25,7 +25,7 @@ jobs:
                   SOURCE: "~/htdocs/backend_elsalvador"
                   REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
                   REMOTE_USER: ${{ secrets.REMOTE_USER }}
-                  TARGET: "~/htdocs/backend_elsalvador"
+                  TARGET: "/htdocs/backend_elsalvador"
                   EXCLUDE: "/dist/, /node_modules/, /vendor/"
             -   name: Deploy to Server
                 run: |
