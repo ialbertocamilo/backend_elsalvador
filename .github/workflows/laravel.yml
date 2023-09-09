@@ -28,7 +28,7 @@ jobs:
                   SCRIPT_BEFORE: |
                     whoami
                     ls -al
-                    sudo chown -R bitnami:www-data storage/*
+                    sudo -rf storage
                     echo $RSYNC_STDOUT
             -   name: Build server
                 uses: appleboy/ssh-action@master
