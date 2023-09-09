@@ -17,17 +17,16 @@ jobs:
                     php-version: '8.1'
             -   name: Install Packages
                 run: composer install --no-dev
-
-            - name: Deploy to Server
-              uses: easingthemes/ssh-deploy@main
-              with:
-                SSH_PRIVATE_KEY: ${{ secrets.SECRET_PEM }}
-                ARGS: "-rlgoDzvc -i --delete"
-                SOURCE: "~/htdocs/backend_elsalvador"
-                REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-                REMOTE_USER: ${{ secrets.REMOTE_USER }}
-                TARGET: "~/htdocs/backend_elsalvador"
-                EXCLUDE: "/dist/, /node_modules/, /vendor/"
+            -   name: Deploy to Server
+                uses: easingthemes/ssh-deploy@main
+                with:
+                  SSH_PRIVATE_KEY: ${{ secrets.SECRET_PEM }}
+                  ARGS: "-rlgoDzvc -i --delete"
+                  SOURCE: "~/htdocs/backend_elsalvador"
+                  REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+                  REMOTE_USER: ${{ secrets.REMOTE_USER }}
+                  TARGET: "~/htdocs/backend_elsalvador"
+                  EXCLUDE: "/dist/, /node_modules/, /vendor/"
             -   name: Deploy to Server
                 run: |
                   ssh bitnami@3.93.57.139 "cd ~/htdocs/backend_elsalvador && git pull origin main"
