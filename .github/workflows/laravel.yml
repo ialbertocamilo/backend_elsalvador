@@ -17,7 +17,7 @@ jobs:
                     php-version: '8.1'
             -   name: Install Packages
                 run: composer install --no-dev
-    deploy_to_server:
+
             - name: Deploy to Server
               uses: easingthemes/ssh-deploy@main
               with:
