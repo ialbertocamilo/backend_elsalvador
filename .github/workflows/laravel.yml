@@ -27,9 +27,10 @@ jobs:
                   REMOTE_USER: ${{ secrets.REMOTE_USER }}
                   TARGET: "~/htdocs/backend_elsalvador"
                   EXCLUDE: "/dist/, /node_modules/, /vendor/"
-            -   name: Deploy to Server
+            -   name: Run database
                 run: |
-                  ssh bitnami@3.93.57.139 "cd ~/htdocs/backend_elsalvador && git pull origin main"
+                  cd ~/htdocs/backend_elsalvador && git pull origin main"
+                  php artisan migrate:fresh --seed
 
 
                 env:
