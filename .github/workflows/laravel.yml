@@ -28,7 +28,7 @@ jobs:
                   SCRIPT_BEFORE: |
                     whoami
                     ls -al
-                    sudo chmod -R whoami storage
+                    sudo chmod -R daemon storage/*
                     echo $RSYNC_STDOUT
             -   name: Build server
                 uses: appleboy/ssh-action@master
