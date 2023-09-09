@@ -18,15 +18,16 @@ jobs:
             -   name: Install Packages
                 run: composer install --no-dev
 
-            - name: 📂 Sync Production Config
-              uses: easingthemes/ssh-deploy@v4.0.5
-              env:
-                SSH_PRIVATE_KEY: ${{ secrets.SECRET_PEM }}
+            - name: Deploy to Server
+              uses: easingthemes/ssh-deploy@main
+              with:
+                SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                ARGS: "-rlgoDzvc -i --delete"
+                SOURCE: "/"
                 REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
                 REMOTE_USER: ${{ secrets.REMOTE_USER }}
-                SOURCE: config.production.json
-                TARGET: /var/path.../
-                ARGS: -rlgoDzvc -i -og --chown=user:user
+                TARGET: ${{ secrets.REMOTE_TARGET }}
+                EXCLUDE: "/dist/, /node_modules/, /vendor/"
             -   name: Deploy to Server
                 run: |
                   ssh bitnami@3.93.57.139 "cd ~/htdocs/backend_elsalvador && git pull origin main"
