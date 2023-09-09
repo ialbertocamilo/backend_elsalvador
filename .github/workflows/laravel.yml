@@ -17,9 +17,18 @@ jobs:
                     php-version: '8.1'
             -   name: Install Packages
                 run: composer install --no-dev
+
+            - name: 📂 Sync Production Config
+              uses: easingthemes/ssh-deploy@v4.0.5
+              env:
+                SSH_PRIVATE_KEY: ${{ secrets.SECRET_PEM }}
+                REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+                REMOTE_USER: ${{ secrets.REMOTE_USER }}
+                SOURCE: config.production.json
+                TARGET: /var/path.../
+                ARGS: -rlgoDzvc -i -og --chown=user:user
             -   name: Deploy to Server
                 run: |
-                  ssh-keyscan -h 3.93.57.139 >> ~/.ssh/known_hosts
                   ssh bitnami@3.93.57.139 "cd ~/htdocs/backend_elsalvador && git pull origin main"
 
 
