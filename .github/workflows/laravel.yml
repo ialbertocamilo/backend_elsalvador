@@ -29,7 +29,7 @@ jobs:
                   EXCLUDE: "/dist/, /node_modules/, /vendor/"
             -   name: Run database
                 run: |
-                  cd ~/htdocs/backend_elsalvador && git pull origin main"
+                  cd ~/htdocs/backend_elsalvador && git pull origin main
                   php artisan migrate:fresh --seed
 
 
