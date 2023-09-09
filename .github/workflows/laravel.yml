@@ -27,11 +27,15 @@ jobs:
                   REMOTE_USER: ${{ secrets.REMOTE_USER }}
                   TARGET: "~/htdocs/backend_elsalvador"
                   EXCLUDE: "/dist/, /node_modules/, /vendor/"
-            -   name: Run database
-                run: |
-                  cd ~/htdocs/backend_elsalvador && git pull origin main
-                  php artisan migrate:fresh --seed
+            -   name: Post deploy
+                uses: appleboy/ssh-action@master
+                with:
+                  host: ${{ secrets.REMOTE_HOST }}
+                  username: ${{ secrets.REMOTE_USER }}
+                  key: ${{ secrets.SECRET_PEM }}
+                  port: 22
+                  script: |
+                    cd ~/htdocs/backend_elsalvador
+                    php artisan migrate:fresh --seed
+                    sudo chmod 775 storage
 
-
-                env:
-                    DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
