@@ -28,10 +28,9 @@ jobs:
                   SCRIPT_BEFORE: |
                     whoami
                     ls -al
-                    sudo chown -R ${{ secrets.REMOTE_USER }}:${{ secrets.REMOTE_USER }} storage
+#                    sudo chown -R ${{ secrets.REMOTE_USER }}:${{ secrets.REMOTE_USER }} storage
                     sudo rm -rf storage
                     cp .env ../.env
-                    echo $RSYNC_STDOUT
 
             -   name: Build server
                 uses: appleboy/ssh-action@master
