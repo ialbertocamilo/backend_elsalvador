@@ -30,6 +30,7 @@ jobs:
                     ls -al
                     sudo chown -R ${{ secrets.REMOTE_USER }}:${{ secrets.REMOTE_USER }} storage
                     sudo rm -rf storage
+                    git pull origin main
                     cp .env ../.env
 
             -   name: Build server
