@@ -29,7 +29,7 @@ jobs:
                     whoami
                     ls -al
                     sudo chown -R ${{ secrets.REMOTE_USER }}:${{ secrets.REMOTE_USER }} storage
-                    sudo -rf storage
+                    sudo rm -rf storage
                     cp .env ../.env
                     echo $RSYNC_STDOUT
 
