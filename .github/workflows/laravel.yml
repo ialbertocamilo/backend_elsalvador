@@ -52,6 +52,7 @@ jobs:
     configure:
         name: Configure project fresh Database
         runs-on: ubuntu-latest
+
         steps:
 
           - name: Migrate Fresh
