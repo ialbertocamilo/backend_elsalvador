@@ -30,7 +30,6 @@ jobs:
                     ls -al
                     cd ~/htdocs/backend_elsalvador
                     git pull origin main
-                    sudo chown -R ${{ secrets.REMOTE_USER }}:${{ secrets.REMOTE_USER }} storage
                     sudo rm -rf storage
                     cp .env ../.env
 
@@ -45,7 +44,23 @@ jobs:
                     cd ~/htdocs/backend_elsalvador
                     cp ../.env .env
                     composer install --no-dev
-                    php artisan migrate:fresh --seed
                     sudo chmod 775 storage
-                    sudo chown -R daemon:www-data storage
+                    sudo chmod 775 bootstrap/cache
+                    sudo chown -R daemon:daemon storage
+                    sudo chown -R daemon:daemon bootstrap/cache
 
+    configure:
+        name: Configure project fresh Database
+        runs-on: ubuntu-latest
+        steps:
+
+          - name: Migrate Fresh
+            uses: appleboy/ssh-action@master
+            with:
+              host: ${{ secrets.REMOTE_HOST }}
+              username: ${{ secrets.REMOTE_USER }}
+              key: ${{ secrets.SECRET_PEM }}
+              port: 22
+              script: |
+                cd ~/htdocs/backend_elsalvador
+                php artisan migrate:fresh --seed
