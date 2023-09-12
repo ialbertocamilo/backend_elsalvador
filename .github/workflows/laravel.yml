@@ -36,9 +36,9 @@ jobs:
             -   name: Build server
                 uses: appleboy/ssh-action@master
                 with:
-                  host: ${{secrets.REMOTE_HOST}}
-                  username: ${{secrets.REMOTE_USER}}
-                  key: ${{secrets.SECRET_PEM}}
+                  host: ${{ secrets.REMOTE_HOST }}
+                  username: ${{ secrets.REMOTE_USER }}
+                  key: ${{ secrets.SECRET_PEM }}
                   port: 22
                   script: |
                     cd ~/htdocs/backend_elsalvador
