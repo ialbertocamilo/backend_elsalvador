@@ -43,7 +43,6 @@ jobs:
                   script: |
                     cd ~/htdocs/backend_elsalvador
                     cp ../.env .env
-                    composer install
                     sudo chmod 775 storage
                     sudo chmod 775 bootstrap/cache
                     sudo chown -R daemon:daemon storage
