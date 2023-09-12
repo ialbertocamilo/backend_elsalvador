@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 
-Route::get('/hello',fn()=>'Test App apache v'.apache_get_version());
+Route::get('/hello',fn()=>'Test App apache time '.\Illuminate\Support\Facades\Date::now());
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
