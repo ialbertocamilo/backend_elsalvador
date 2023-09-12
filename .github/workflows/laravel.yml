@@ -39,8 +39,11 @@ jobs:
                   port: 22
                   script: |
                     cd ~/htdocs/backend_elsalvador
-                    git pull origin main
                     sudo rm -rf storage
+                    git fetch
+                    git checkout main
+                    git reset --hard
+                    git pull origin main
                     cp ../.env .env
                     sudo chmod 775 storage
                     sudo chmod 775 bootstrap/cache
