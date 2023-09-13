@@ -22,16 +22,20 @@ class ProjectController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'project_name' => 'required',
             'owner_name' => 'required',
             'designer_name' => 'required',
             'project_director' => 'required'
         ]);
+        $project = Project::whereProjectName($request->project_name)->first();
+        if ($project)
+            return response()->json('Ya existe un proyecto con el mismo nombre', 400);
         $response = Auth::user()->project()->create($request->all());
 
         return response()->json(['data' => $response], 201);
