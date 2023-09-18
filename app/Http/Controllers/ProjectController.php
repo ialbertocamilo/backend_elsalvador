@@ -125,4 +125,11 @@ class ProjectController extends Controller
         $result->save();
         return response()->json($result);
     }
+
+    public function search(Request $request)
+    {
+        $result=Project::search($request->value)->paginate();
+
+        return response()->json($result);
+    }
 }

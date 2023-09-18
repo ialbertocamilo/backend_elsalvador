@@ -30,6 +30,7 @@ Route::get('/verify-token', [AuthController::class, 'verify'])->middleware('auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::apiResource('projects', ProjectController::class)->middleware('auth:sanctum');
 Route::group(['prefix' => 'projects', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/search', [\App\Http\Controllers\ProjectController::class, 'search']);
     Route::post('/get-data', [\App\Http\Controllers\ProjectController::class, 'getProjectData']);
     Route::post('/save-data', [\App\Http\Controllers\ProjectController::class, 'saveProjectData']);
 });
