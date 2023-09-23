@@ -57,7 +57,7 @@ class ProjectController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Project      $project
+     * @param \App\Models\Project $project
      *
      * @return \Illuminate\Http\Response
      */
@@ -126,9 +126,26 @@ class ProjectController extends Controller
         return response()->json($result);
     }
 
+    public function saveFiles(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'project_id' => 'required',
+            'project_file' => 'file'
+        ]);
+        if ($validator->fails())
+            return response()->json($validator->errors(), 400);
+
+
+        $result = Project::find($request->project_id)->first()
+            ->addMedia($request->file('project_file'))
+            ->toMediaCollection('files');
+
+        return response()->json($result);
+    }
+
     public function search(Request $request)
     {
-        $result=Project::search($request->value)->paginate();
+        $result = Project::search($request->value)->paginate();
 
         return response()->json($result);
     }

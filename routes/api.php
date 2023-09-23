@@ -23,7 +23,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('/hello',fn()=>'Test App apache time '.\Illuminate\Support\Facades\Date::now());
-
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/verify-token', [AuthController::class, 'verify'])->middleware('auth:sanctum');
@@ -33,5 +32,8 @@ Route::group(['prefix' => 'projects', 'middleware' => 'auth:sanctum'], function 
     Route::post('/search', [\App\Http\Controllers\ProjectController::class, 'search']);
     Route::post('/get-data', [\App\Http\Controllers\ProjectController::class, 'getProjectData']);
     Route::post('/save-data', [\App\Http\Controllers\ProjectController::class, 'saveProjectData']);
+    Route::post('/save-file', [\App\Http\Controllers\ProjectController::class, 'saveFiles']);
 });
 Route::apiResource('data', \App\Http\Controllers\DataController::class)->middleware('auth:sanctum');
+
+//Route::mediaLibrary();
