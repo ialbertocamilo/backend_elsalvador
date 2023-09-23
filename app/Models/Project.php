@@ -21,7 +21,6 @@ class Project extends Model implements HasMedia
     function data(){
         return $this->hasMany(Data::class);
     }
-
     function scopeSearch($query,$keyword){
         return $query->where(function($query) use ($keyword){
             $query->where('project_name','like',"%$keyword%")

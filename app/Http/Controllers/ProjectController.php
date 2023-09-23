@@ -7,6 +7,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProjectController extends Controller
 {
@@ -130,17 +131,26 @@ class ProjectController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'project_id' => 'required',
-            'project_file' => 'file'
+            'project_file' => 'file',
+            'key'=>'required'
         ]);
         if ($validator->fails())
             return response()->json($validator->errors(), 400);
 
+        $file=$request->file('project_file');
 
-        $result = Project::find($request->project_id)->first()
-            ->addMedia($request->file('project_file'))
-            ->toMediaCollection('files');
+        $project = Project::find($request->project_id)->first();
+        $result=$project->addMedia($file)
+        ->toMediaCollection();
+
+        $project->data()->create(['key'=>$request->key,'payload'=>json_encode($result->uuid)]);
 
         return response()->json($result);
+    }
+
+    public function downloadFile(Request $request){
+        $file=Media::findByUuid($request->id)->first();
+        return response()->download($file->getPath());
     }
 
     public function search(Request $request)

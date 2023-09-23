@@ -25,4 +25,5 @@ jobs:
                     cd ~/htdocs/backend_elsalvador
                     php artisan migrate:fresh --seed
                     php artisan cache:clear
+                    php artisan storage:link
 
