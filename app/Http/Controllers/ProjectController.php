@@ -58,7 +58,7 @@ class ProjectController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Project $project
+     * @param \App\Models\Project      $project
      *
      * @return \Illuminate\Http\Response
      */
@@ -132,24 +132,34 @@ class ProjectController extends Controller
         $validator = Validator::make($request->all(), [
             'project_id' => 'required',
             'project_file' => 'file',
-            'key'=>'required'
+            'key' => 'required'
         ]);
         if ($validator->fails())
             return response()->json($validator->errors(), 400);
 
-        $file=$request->file('project_file');
+        $file = $request->file('project_file');
 
         $project = Project::find($request->project_id)->first();
-        $result=$project->addMedia($file)
-        ->toMediaCollection();
+        $result  = $project->addMedia($file)
+            ->toMediaCollection();
 
-        $project->data()->create(['key'=>$request->key,'payload'=>json_encode($result->uuid)]);
+        $project->data()->create(['key' => $request->key . '-file', 'payload' => json_encode($result->uuid)]);
 
         return response()->json($result);
     }
 
-    public function downloadFile(Request $request){
-        $file=Media::findByUuid($request->id)->first();
+
+    public function getFiles(Request $request)
+    {
+        $key=$request->key.'-file';
+
+        $data = Data::whereProjectId($request->project_id)->where('key', $key)->get();
+        return response()->json($data);
+    }
+
+    public function downloadFile(Request $request)
+    {
+        $file = Media::findByUuid($request->id)->first();
         return response()->download($file->getPath());
     }
 

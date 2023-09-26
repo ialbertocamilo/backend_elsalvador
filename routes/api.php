@@ -33,6 +33,7 @@ Route::group(['prefix' => 'projects', 'middleware' => 'auth:sanctum'], function 
     Route::post('/get-data', [\App\Http\Controllers\ProjectController::class, 'getProjectData']);
     Route::post('/save-data', [\App\Http\Controllers\ProjectController::class, 'saveProjectData']);
     Route::post('/save-file', [\App\Http\Controllers\ProjectController::class, 'saveFiles']);
+    Route::post('/get-files', [\App\Http\Controllers\ProjectController::class, 'getFiles']);
     Route::post('/download-file', [\App\Http\Controllers\ProjectController::class, 'downloadFile']);
 });
 Route::apiResource('data', \App\Http\Controllers\DataController::class)->middleware('auth:sanctum');
