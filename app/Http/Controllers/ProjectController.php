@@ -37,7 +37,7 @@ class ProjectController extends Controller
         $project = Project::whereProjectName($request->project_name)->first();
         if ($project)
             return response()->json('Ya existe un proyecto con el mismo nombre', 400);
-        $response = Auth::user()->project()->create($request->all());
+        $response = Auth::user()->projects()->create($request->all());
 
         return response()->json(['data' => $response], 201);
     }
