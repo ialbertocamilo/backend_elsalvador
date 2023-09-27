@@ -58,7 +58,7 @@ class ProjectController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Project $project
+     * @param \App\Models\Project      $project
      *
      * @return \Illuminate\Http\Response
      */
@@ -138,16 +138,18 @@ class ProjectController extends Controller
             return response()->json($validator->errors(), 400);
 
 
-        if (!$request->project_file) return response()->json(['message' => 'No existe project_file o tiene formato incorrecto']);
         $file = $request->file('project_file');
-        $key=$request->key . '-file';
+        $key  = $request->key . '-file';
 
-        $project = Project::find($request->project_id)->first();
+        $project = Project::find($request->project_id);
+
+        if ($project) {
+            $project->getMedia($key)->each(function ($media) {
+                $media->delete();
+            });
+        }
         $result = $project->addMedia($file)
             ->toMediaCollection($key);
-
-        $project->data()->create(['key' => $key, 'payload' => json_encode($result->uuid)]);
-
         return response()->json($result);
     }
 
@@ -156,7 +158,7 @@ class ProjectController extends Controller
     {
         $key = $request->key . '-file';
 
-        $data = Project::find($request->project_id)->getMedia();
+        $data = Project::find($request->project_id)->getMedia($key);
         return response()->json($data);
     }
 
