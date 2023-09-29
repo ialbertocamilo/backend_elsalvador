@@ -31,8 +31,15 @@ class ProjectController extends Controller
         $request->validate([
             'project_name' => 'required',
             'owner_name' => 'required',
+            'owner_lastname' => 'required',
             'designer_name' => 'required',
-            'project_director' => 'required'
+            'project_director' => 'required',
+            'department' => 'required',
+            'municipality' => 'required',
+            'address' => 'required',
+            'phone' => 'required',
+            'profession' => 'required',
+            'nationality' => 'required',
         ]);
         $project = Project::whereProjectName($request->project_name)->first();
         if ($project)
@@ -60,7 +67,7 @@ class ProjectController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Project      $project
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, Project $project)
     {
@@ -68,8 +75,15 @@ class ProjectController extends Controller
         $request->validate([
             'project_name' => 'required',
             'owner_name' => 'required',
+            'owner_lastname' => 'required',
             'designer_name' => 'required',
-            'project_director' => 'required'
+            'project_director' => 'required',
+            'department' => 'required',
+            'municipality' => 'required',
+            'address' => 'required',
+            'phone' => 'required',
+            'profession' => 'required',
+            'nationality' => 'required',
         ]);
 
         $project->update($request->all());

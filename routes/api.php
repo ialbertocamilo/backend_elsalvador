@@ -36,6 +36,11 @@ Route::group(['prefix' => 'projects', 'middleware' => 'auth:sanctum'], function 
     Route::post('/get-files', [\App\Http\Controllers\ProjectController::class, 'getFiles']);
     Route::post('/download-file', [\App\Http\Controllers\ProjectController::class, 'downloadFile']);
 });
+
+Route::group(['prefix' => 'map', 'middleware' => 'auth:sanctum'], function () {
+
+    Route::get('/geojson',[\App\Http\Controllers\ProjectLocationController::class,'generateGeoJson']);
+});
 Route::apiResource('data', \App\Http\Controllers\DataController::class)->middleware('auth:sanctum');
 
 //Route::mediaLibrary();
