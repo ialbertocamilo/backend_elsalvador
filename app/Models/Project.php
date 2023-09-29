@@ -13,6 +13,7 @@ class Project extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $guarded=[];
+    protected $with=['data'];
 
     function user(){
         return $this->belongsTo(User::class);

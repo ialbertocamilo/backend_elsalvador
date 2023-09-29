@@ -10,17 +10,21 @@ return new class extends Migration {
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->date('membership_date')->nullable();
+            $table->uuid()->default((new \Faker\Core\Uuid())->uuid3());
             $table->foreignIdFor(User::class);
             $table->string('project_name');
             $table->string('owner_name');
+            $table->string('owner_lastname');
+            $table->string('profession')->nullable();
+            $table->string('nationality')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('department')->nullable();
             $table->string('designer_name');
             $table->string('project_director');
             $table->string('address')->nullable();
             $table->string('municipality')->nullable();
             $table->string('energy_advisor')->nullable();
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
             $table->string('levels')->nullable();
             $table->string('offices')->nullable();
             $table->string('surface')->nullable();
