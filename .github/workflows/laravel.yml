@@ -47,7 +47,7 @@ jobs:
                     cp ../.env .env
                     sudo chmod 775 storage
                     sudo chmod 775 bootstrap/cache
-                    sudo chown -R bitnami:bitnami storage
-                    sudo chown -R bitnami:bitnami bootstrap/cache
+                    sudo chown -R bitnami:daemon storage
+                    sudo chown -R bitnami:daemon bootstrap/cache
 
 
