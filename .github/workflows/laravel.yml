@@ -48,6 +48,6 @@ jobs:
                     sudo chmod 775 storage
                     sudo chmod 775 bootstrap/cache
                     sudo chown -R bitnami:bitnami storage
-                    sudo chown -R bitname:bitnami bootstrap/cache
+                    sudo chown -R bitnami:bitnami bootstrap/cache
 
 
