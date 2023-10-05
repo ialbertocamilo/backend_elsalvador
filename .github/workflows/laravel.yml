@@ -39,7 +39,7 @@ jobs:
                   port: 22
                   script: |
                     cd ~/htdocs/backend_elsalvador
-                    sudo rm -rf storage
+                    sudo rm -R storage
                     git fetch
                     git checkout main
                     git reset --hard
@@ -47,7 +47,7 @@ jobs:
                     cp ../.env .env
                     sudo chmod 775 storage
                     sudo chmod 775 bootstrap/cache
-                    sudo chown -R daemon:daemon storage
-                    sudo chown -R daemon:daemon bootstrap/cache
+                    sudo chown -R bitnami:bitnami storage
+                    sudo chown -R bitname:bitnami bootstrap/cache
 
 
