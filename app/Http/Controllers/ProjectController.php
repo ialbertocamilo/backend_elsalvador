@@ -13,7 +13,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::paginate(15);
+        $projects = Project::all();
 
         return response()->json($projects);
     }
@@ -184,7 +184,7 @@ class ProjectController extends Controller
 
     public function search(Request $request)
     {
-        $result = Project::search($request->value)->paginate();
+        $result = Project::search($request->value)->get()->all();
 
         return response()->json($result);
     }
