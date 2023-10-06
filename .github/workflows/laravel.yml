@@ -39,6 +39,7 @@ jobs:
                   port: 22
                   script: |
                     cd ~/htdocs/backend_elsalvador
+                    echo $USER
                     sudo rm -R storage
                     git fetch
                     git checkout main
