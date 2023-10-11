@@ -3,16 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Dotenv\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function login(Request $request): \Illuminate\Http\JsonResponse
     {
+        $validator = Validator::make($request->all(),[
+            'username' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+        if ($validator->fails()) return response()->json(['errors'=>$validator->errors()->all()], 400);
 
         if (Auth::attempt(['email' => $request->username, 'password' => $request->password])) {
             $user = Auth::user();
@@ -64,25 +68,25 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->messages(),400);
+            return response()->json($validator->messages(), 400);
         }
         // Crear un nuevo usuario
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->lastname = $request->lastname;
-        $user->profession = $request->profession;
-        $user->nationality = $request->nationality;
-        $user->department = $request->department;
+        $user               = new User();
+        $user->name         = $request->name;
+        $user->lastname     = $request->lastname;
+        $user->profession   = $request->profession;
+        $user->nationality  = $request->nationality;
+        $user->department   = $request->department;
         $user->municipality = $request->municipality;
-        $user->address = $request->address;
-        $user->phone = $request->phone;
-        $user->email = $request->email;
-        $user->password = password_hash($request->password, PASSWORD_BCRYPT);
+        $user->address      = $request->address;
+        $user->phone        = $request->phone;
+        $user->email        = $request->email;
+        $user->password     = password_hash($request->password, PASSWORD_BCRYPT);
 
         $user->save();
 
         // Responder con JSON
-        return response()->json(['message' => 'Registro exitoso', 'data' => $user->name.' '.$user->lastname], 201);
+        return response()->json(['message' => 'Registro exitoso', 'data' => $user->name . ' ' . $user->lastname], 201);
     }
 }
