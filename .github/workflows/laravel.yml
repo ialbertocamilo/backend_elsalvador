@@ -40,10 +40,6 @@ jobs:
                   script: |
                     cd ~/htdocs/backend_elsalvador
                     echo $USER
-                    sudo rm -R storage
-                    git fetch
-                    git checkout main
-                    git reset --hard
                     git pull origin main
                     cp ../.env .env
                     sudo chmod 775 storage
