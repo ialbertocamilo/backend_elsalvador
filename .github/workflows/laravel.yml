@@ -29,6 +29,7 @@ jobs:
                     whoami
                     ls -al
                     pwd
+                    cd ~/htdocs/backend_elsalvador && sudo rm -R storage bootstrap/cache
 
             -   name: Build server
                 uses: appleboy/ssh-action@master
