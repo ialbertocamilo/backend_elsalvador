@@ -41,7 +41,7 @@ jobs:
                   script: |
                     cd ~/htdocs/backend_elsalvador
                     echo $USER
-                    git pull origin main
+                    git pull origin main --rebase
                     cp ../.env .env
                     sudo chmod 775 storage
                     sudo chmod 775 bootstrap/cache
