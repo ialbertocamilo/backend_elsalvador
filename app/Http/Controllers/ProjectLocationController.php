@@ -13,7 +13,6 @@ class ProjectLocationController extends Controller
     {
 
         $result   = auth()->user()->projects()->withWhereHas('data', function ($query) {
-
             $query->where('key', 'geoinformation');
         })->get(['id', 'project_name']);
         $features = $result->map(function ($value) {
@@ -21,15 +20,15 @@ class ProjectLocationController extends Controller
                 'type' => 'Feature',
                 'properties' => [
                     'name' => $value->project_name,
-                    'id'=>$value->id
+                    'id' => $value->id
                 ],
                 'geometry' => ['type' => 'Point', 'coordinates' => json_decode($value->data[0]->payload)->Place->Geometry->Point]
             ];
         });
-        $geoJSON  =[
-                'type' => 'FeatureCollection',
-                'features' => $features,
-            ];
+        $geoJSON  = [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
 
         return response()->json($geoJSON);
     }

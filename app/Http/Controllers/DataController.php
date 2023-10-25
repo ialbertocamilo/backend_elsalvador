@@ -24,24 +24,21 @@ class DataController extends Controller
      */
     public function store(Request $request)
     {
-        $request->get('project_id');
 
-        $response = Auth::user()->data()->create($request->all());
+        $validator = Validator::make($request->all(), [
+            'payload' => 'required'
+        ]);
+        if ($validator->fails())
+            return response()->json($validator->errors(), 400);
 
+        $response = Data::savePackageConfiguration($request->key, $request->payload);
         return response()->json(['data' => $response], 201);
     }
 
 
     public function show(string $project_id, Request $data)
     {
-        $data->validate([
-            'payload' => 'required',
-            'project_id' => 'required',
-            'designer_name' => 'required',
-            'project_director' => 'required'
-        ]);
-        $response = Project::find($project_id)->data()->create($data);
-        return response()->json(['data' => $response], 200);
+        return response()->json(['data' => $project_id]);
     }
 
     /**
@@ -60,6 +57,17 @@ class DataController extends Controller
         //
     }
 
+    public function getBy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'key' => 'required'
+        ]);
+        if ($validator->fails())
+            return response()->json($validator->errors(), 400);
 
+
+        $response = Data::where(['key' => $request->key])->first();
+        return response()->json(['data' => $response]);
+    }
 
 }

@@ -133,9 +133,9 @@ class ProjectController extends Controller
             return response()->json($validator->errors(), 400);
 
         $result = Data::where(['key' => $request->key, 'project_id' => $request->project_id])->first();
-        if (!$result) {
+        if (!$result)
             $result = Data::create($request->only('project_id', 'key'));
-        }
+
         $result->payload = json_encode($request->payload);
         $result->save();
         return response()->json($result);

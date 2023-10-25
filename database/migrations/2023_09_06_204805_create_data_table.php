@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('data', function (Blueprint $table) {
             $table->id();
-            $table->uuid()->default((new \Faker\Core\Uuid())->uuid3());
-            $table->foreignIdFor(\App\Models\Project::class);
+            $table->uuid();
+            $table->foreignIdFor(\App\Models\Project::class)->nullable();
             $table->string('key')->nullable();
             $table->json('payload')->nullable();
             $table->timestamps();

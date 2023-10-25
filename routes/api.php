@@ -38,9 +38,10 @@ Route::group(['prefix' => 'projects', 'middleware' => 'auth:sanctum'], function 
 });
 
 Route::group(['prefix' => 'map', 'middleware' => 'auth:sanctum'], function () {
-
     Route::get('/geojson',[\App\Http\Controllers\ProjectLocationController::class,'generateGeoJson']);
 });
 Route::apiResource('data', \App\Http\Controllers\DataController::class)->middleware('auth:sanctum');
-
+Route::group(['prefix' => 'data', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/get-one', [\App\Http\Controllers\DataController::class, 'getBy']);
+});
 //Route::mediaLibrary();

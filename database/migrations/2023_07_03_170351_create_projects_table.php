@@ -10,7 +10,6 @@ return new class extends Migration {
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->uuid()->default((new \Faker\Core\Uuid())->uuid3());
             $table->foreignIdFor(User::class);
             $table->string('project_name');
             $table->string('owner_name');
