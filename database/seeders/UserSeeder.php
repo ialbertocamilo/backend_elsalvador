@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+use App\Helpers\RoleCode;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,11 +22,13 @@ class UserSeeder extends Seeder
                 'name' => 'admin',
                 'email' => 'svg.z32@gmail.com',
                 'password' => Hash::make('12345678'),
+                'role_id'=> 2
             ],
             [
                 'name' => 'Jane Smith',
                 'email' => 'janesmith@example.com',
                 'password' => Hash::make('password456'),
+                'role_id'=> 1
             ],
             // Agrega más usuarios según tus necesidades
         ];

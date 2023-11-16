@@ -12,11 +12,11 @@ class AuthController extends Controller
 {
     public function login(Request $request): \Illuminate\Http\JsonResponse
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'username' => ['required', 'email'],
             'password' => ['required'],
         ]);
-        if ($validator->fails()) return response()->json(['errors'=>$validator->errors()->all()], 400);
+        if ($validator->fails()) return response()->json(['errors' => $validator->errors()->all()], 400);
 
         if (Auth::attempt(['email' => $request->username, 'password' => $request->password])) {
             $user = Auth::user();

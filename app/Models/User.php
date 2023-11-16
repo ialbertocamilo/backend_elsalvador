@@ -24,7 +24,7 @@ class User extends Authenticatable
 //        'password',
 //    ];
 
-    protected $guarded=[
+    protected $guarded = [
         'password'
     ];
     /**
@@ -48,7 +48,13 @@ class User extends Authenticatable
     ];
 
 
-    function projects():HasMany{
+    function projects(): HasMany
+    {
         return $this->hasMany(Project::class);
+    }
+
+    function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 }
