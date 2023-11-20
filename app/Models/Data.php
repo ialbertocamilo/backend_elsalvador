@@ -17,9 +17,9 @@ class Data extends Model
     public static function boot()
     {
         parent::boot();
-        self::creating(function ($model) {
-            $model->uuid = (string)Str::uuid();
-        });
+//        self::creating(function ($model) {
+//            $model->uuid = (string)Str::uuid();
+//        });
     }
 
     function projects()
