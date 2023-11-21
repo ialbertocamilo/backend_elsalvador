@@ -20,7 +20,59 @@ class DataSeeder extends Seeder
         $payload = [
             [
                 'key'=>'package-configuration',
-                'payload'=>'{"config": [{"hvac": 2, "shades": 2, "roofs_u_value": 2, "walls_u_value": 2, "windows_u_value": 2, "roofs_reflectance": 2, "walls_reflectance": 2, "shading_coefficient": 2, "final_energy_reduction": 2, "proportion_wall_window": 2}], "questions": [{"text": "Los planos indican claramente la composición y valores de los muros exteriores", "index": 0}, {"text": "Los planos indican claramente los elementos de sombreado en ventanas Sur", "index": 1}, {"text": "Los planos indican claramente los elementos de sombreado en ventanas Oeste", "index": 2}, {"text": "Los planos indican claramente el área de elementos opacos y transparentes", "index": 3}, {"text": "Los planos indican claramente la composición y valores del techo", "index": 4}, {"text": "Los planos indican claramente la instalación del equipo de HVAC", "index": 5}, {"text": "Se entregan certificados y/o fichas técnicas de los materiales que componen los muros", "index": 6}, {"text": "Se entregan certificados y/o fichas técnicas de los materiales que componen las ventanas", "index": 7}, {"text": "Se entregan certificados y/o fichas técnicas de los materiales que componen el techo", "index": 8}, {"text": "Se entregan certificados y/o fichas técnicas del sistema de aire acondicionado", "index": 9}]}',
+                'payload'=>'{"config": [{"hvac": 2, "shades": 2, "roofs_u_value": 2, "walls_u_value": 2, "windows_u_value": 2, "roofs_reflectance": 2, "walls_reflectance": 2, "shading_coefficient": 2, "final_energy_reduction": 2, "proportion_wall_window": 2}],
+                 "questions": [
+  {
+    "title": "Los planos indican claramente la composición y valores de los muros exteriores",
+    "id": 0,
+    "deactivated": false
+  },
+  {
+    "title": "Los planos indican claramente los elementos de sombreado en ventanas Sur",
+    "id": 1,
+    "deactivated": false
+  },
+  {
+    "title": "Los planos indican claramente los elementos de sombreado en ventanas Oeste",
+    "id": 2,
+    "deactivated": false
+  },
+  {
+    "title": "Los planos indican claramente el área de elementos opacos y transparentes",
+    "id": 3,
+    "deactivated": false
+  },
+  {
+    "title": "Los planos indican claramente la composición y valores del techo",
+    "id": 4,
+    "deactivated": false
+  },
+  {
+    "title": "Los planos indican claramente la instalación del equipo de HVAC",
+    "id": 5,
+    "deactivated": false
+  },
+  {
+    "title": "Se entregan certificados y/o fichas técnicas de los materiales que componen los muros",
+    "id": 6,
+    "deactivated": false
+  },
+  {
+    "title": "Se entregan certificados y/o fichas técnicas de los materiales que componen las ventanas",
+    "id": 7,
+    "deactivated": false
+  },
+  {
+    "title": "Se entregan certificados y/o fichas técnicas de los materiales que componen el techo",
+    "id": 8,
+    "deactivated": false
+  },
+  {
+    "title": "Se entregan certificados y/o fichas técnicas del sistema de aire acondicionado",
+    "id": 9,
+    "deactivated": false
+  }
+]}',
             ],
             // Agrega más usuarios según tus necesidades
         ];
