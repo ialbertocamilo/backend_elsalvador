@@ -17,9 +17,7 @@ class Data extends Model
     public static function boot()
     {
         parent::boot();
-//        self::creating(function ($model) {
-//            $model->uuid = (string)Str::uuid();
-//        });
+
     }
 
     function projects()
@@ -35,7 +33,14 @@ class Data extends Model
             if (!$response)
                 $response = Data::create(['key' => $key]);
 
-            $response->payload=json_encode($payload);
+            $config = $payload['config'] ?? json_decode($response->payload)->config;
+            $questions = $payload['questions'] ?? json_decode($response->payload)->questions;
+
+            $newPayload        = [
+                'config' => $config,
+                'questions' => $questions
+            ];
+            $response->payload = json_encode($newPayload);
             return $response->save();
         }
 

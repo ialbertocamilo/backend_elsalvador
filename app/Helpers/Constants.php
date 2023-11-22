@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 class Constants
 {
+    const packagePrefix='PACK';
 }
 
 class RoleCode{
@@ -11,3 +12,5 @@ class RoleCode{
     const Supervisor=2;
     const Admin=3;
 }
+
+
