@@ -23,7 +23,11 @@ class AuthController extends Controller
             Log::debug("authenticated user -> " . $user);
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return response()->json(['token' => $token, 'name' => $user->name, 'id' => $user->id, 'email' => $user->email], 200);
+            return response()->json(['token' => $token,
+                'name' => $user->name,
+                'id' => $user->id,
+                'role'=> $user->role_id,
+                'email' => $user->email]);
         }
         return response()->json(['message' => 'Invalid credentials'], 401);
 
