@@ -188,4 +188,23 @@ class ProjectController extends Controller
 
         return response()->json($result);
     }
+
+    public function setStatus(Request $request){
+//  inProgress: 0,
+//	inRevision: 1,
+//	accepted: 2,
+//	denied: 3,
+
+        $validator = Validator::make($request->all(), [
+            'project_id' => 'required',
+            'status' => 'required'
+        ]);
+        if ($validator->fails())
+            return response()->json($validator->errors(), 400);
+
+        $result=Project::find($request->project_id);
+        $result->status= $request->status;
+        $result->save();
+        return response()->json($result);
+    }
 }

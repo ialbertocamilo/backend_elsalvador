@@ -29,6 +29,7 @@ return new class extends Migration {
             $table->string('surface')->nullable();
             $table->string('extra')->nullable();
             $table->boolean('is_public')->nullable();
+            $table->string('status')->default(0);
             $table->timestamps();
         });
     }

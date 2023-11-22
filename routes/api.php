@@ -35,6 +35,7 @@ Route::group(['prefix' => 'projects', 'middleware' => 'auth:sanctum'], function 
     Route::post('/save-file', [\App\Http\Controllers\ProjectController::class, 'saveFiles']);
     Route::post('/get-files', [\App\Http\Controllers\ProjectController::class, 'getFiles']);
     Route::post('/download-file', [\App\Http\Controllers\ProjectController::class, 'downloadFile']);
+    Route::post('/set-status', [\App\Http\Controllers\ProjectController::class, 'setStatus']);
 });
 
 Route::group(['prefix' => 'map', 'middleware' => 'auth:sanctum'], function () {
