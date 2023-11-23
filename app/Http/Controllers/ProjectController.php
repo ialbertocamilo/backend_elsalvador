@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Data;
 use App\Models\Project;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -14,6 +15,12 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::all();
+        $user     = \auth()->user();
+
+        if ($user->role_id == Role::supervisor) {
+            $projects = Project::whereNot('status', Project::IN_PROGRESS)->get();
+            return response()->json($projects);
+        }
 
         return response()->json($projects);
     }
@@ -43,7 +50,7 @@ class ProjectController extends Controller
         ]);
         $project = Project::whereProjectName($request->project_name)->first();
         if ($project)
-            return response()->json(['error'=>'Ya existe un proyecto con el mismo nombre'], 400);
+            return response()->json(['error' => 'Ya existe un proyecto con el mismo nombre'], 400);
         $response = Auth::user()->projects()->create($request->all());
 
         return response()->json(['data' => $response], 201);
@@ -189,7 +196,8 @@ class ProjectController extends Controller
         return response()->json($result);
     }
 
-    public function setStatus(Request $request){
+    public function setStatus(Request $request)
+    {
 //  inProgress: 0,
 //	inRevision: 1,
 //	accepted: 2,
@@ -202,12 +210,14 @@ class ProjectController extends Controller
         if ($validator->fails())
             return response()->json($validator->errors(), 400);
 
-        $result=Project::find($request->project_id);
-        $result->status= $request->status;
+        $result         = Project::find($request->project_id);
+        $result->status = $request->status;
         $result->save();
         return response()->json($result);
     }
-    public function getStatus(Request $request){
+
+    public function getStatus(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'project_id' => 'required'
@@ -215,7 +225,7 @@ class ProjectController extends Controller
         if ($validator->fails())
             return response()->json($validator->errors(), 400);
 
-        $result=Project::find($request->project_id);
-        return response()->json(['result'=>(int) $result->status]);
+        $result = Project::find($request->project_id);
+        return response()->json(['result' => (int)$result->status]);
     }
 }

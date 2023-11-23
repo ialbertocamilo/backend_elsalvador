@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RoleCode;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,14 +24,15 @@ class AuthController extends Controller
             $user = Auth::user();
             Log::debug("authenticated user -> " . $user);
             $token = $user->createToken('auth_token')->plainTextToken;
-
+            if (!$user->active)
+                return response()->json(['message' => 'El usuario no está activo.'], 400);
             return response()->json(['token' => $token,
                 'name' => $user->name,
                 'id' => $user->id,
-                'role'=> $user->role_id,
+                'role' => $user->role_id,
                 'email' => $user->email]);
         }
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        return response()->json(['message' => 'Credenciales inválidas'], 401);
 
     }
 
@@ -68,7 +71,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users|max:255',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6'
         ]);
 
         if ($validator->fails()) {
@@ -87,6 +90,7 @@ class AuthController extends Controller
         $user->phone        = $request->phone;
         $user->email        = $request->email;
         $user->password     = password_hash($request->password, PASSWORD_BCRYPT);
+        $user->role_id      = Role::agent;
 
         $user->save();
 

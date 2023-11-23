@@ -46,4 +46,12 @@ Route::apiResource('data', \App\Http\Controllers\DataController::class)->middlew
 Route::group(['prefix' => 'data', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/get-one', [\App\Http\Controllers\DataController::class, 'getBy']);
 });
+
+Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/get-all', [\App\Http\Controllers\UserController::class, 'getAll']);
+    Route::post('/change-active', [\App\Http\Controllers\UserController::class, 'changeActive']);
+    Route::post('/change-role', [\App\Http\Controllers\UserController::class, 'changeRole']);
+});
+
+
 //Route::mediaLibrary();
