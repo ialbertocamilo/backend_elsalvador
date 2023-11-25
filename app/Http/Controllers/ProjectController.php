@@ -27,7 +27,7 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-
+        Role::enablePermission(Role::agent);
         $request->validate([
             'project_name' => 'required',
             'owner_name' => 'required',
@@ -184,7 +184,7 @@ class ProjectController extends Controller
 
     public function search(Request $request)
     {
-        $result = Project::search($request->value)->get()->all();
+        $result = \auth()->user()->projects()->search($request->value)->whereNot('status', Project::IN_PROGRESS)->get()->all();
 
         return response()->json($result);
     }

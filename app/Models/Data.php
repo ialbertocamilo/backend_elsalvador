@@ -29,6 +29,7 @@ class Data extends Model
     static function savePackageConfiguration($key, $payload)
     {
         if (isset($key) && $key == 'package-configuration') {
+            Role::enablePermission(Role::supervisor);
             $response = Data::where(['key' => $key])->first();
             if (!$response)
                 $response = Data::create(['key' => $key]);
