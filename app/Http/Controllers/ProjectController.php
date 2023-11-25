@@ -191,8 +191,12 @@ class ProjectController extends Controller
 
     public function search(Request $request)
     {
-        $result = \auth()->user()->projects()->search($request->value)->whereNot('status', Project::IN_PROGRESS)->get()->all();
-
+        $user=\auth()->user();
+        if ($user->role_id==Role::supervisor){
+            $result = Project::whereNot('status', Project::IN_PROGRESS)->search($request->value)->get()->all();
+            return response()->json($result);
+        }
+        $result = $user->projects()->search($request->value)->get()->all();
         return response()->json($result);
     }
 

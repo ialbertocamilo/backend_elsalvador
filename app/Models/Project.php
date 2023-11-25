@@ -29,6 +29,7 @@ class Project extends Model implements HasMedia
     {
         return $query->where(function ($query) use ($keyword) {
             $query->where('project_name', 'like', "%$keyword%")
+
                 ->orWhere('owner_name', 'like', "%$keyword%")
                 ->orWhere('designer_name', 'like', "%$keyword%")
                 ->orWhere('project_director', 'like', "%$keyword%")

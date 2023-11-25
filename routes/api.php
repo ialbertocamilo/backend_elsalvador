@@ -51,6 +51,8 @@ Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], function () 
     Route::get('/get-all', [\App\Http\Controllers\UserController::class, 'getAll']);
     Route::post('/change-active', [\App\Http\Controllers\UserController::class, 'changeActive']);
     Route::post('/change-role', [\App\Http\Controllers\UserController::class, 'changeRole']);
+    Route::post('/get-one', [\App\Http\Controllers\UserController::class, 'getOne']);
+    Route::post('/update-user', [\App\Http\Controllers\UserController::class, 'updateUser']);
 });
 
 
