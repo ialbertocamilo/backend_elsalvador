@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    const agent      = 1;
-    const supervisor = 2;
-    const admin      = 3;
+    const agent=1;
+    const supervisor=2;
+    const admin=3;
 
     use HasFactory;
 

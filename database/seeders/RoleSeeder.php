@@ -19,15 +19,15 @@ class RoleSeeder extends Seeder
         $payload = [
             [
                 'code' => 'agent',
-                'name' => 'Agente',
+                'name' => 'Operador(a)',
             ],
             [
                 'code' => 'supervisor',
-                'name' => 'Supervisor',
+                'name' => 'Administrador(a)',
             ],
             [
                 'code' => 'admin',
-                'name' => 'Administrador',
+                'name' => 'Superadmin',
             ],
             // Agrega más usuarios según tus necesidades
         ];
