@@ -28,6 +28,7 @@ class AuthController extends Controller
                 return response()->json(['message' => 'El usuario no está activo.'], 400);
             return response()->json(['token' => $token,
                 'name' => $user->name,
+                'lastname' => $user->lastname,
                 'id' => $user->id,
                 'role' => $user->role_id,
                 'email' => $user->email]);
