@@ -100,4 +100,12 @@ class UserController extends Controller
         // Responder con JSON
         return response()->json(['message' => 'Registro exitoso', 'data' => $user->name . ' ' . $user->lastname], 201);
     }
+
+    public function search(Request $request)
+    {
+
+        $myId   = auth()->user()->id;
+        $result = User::whereNot('id', $myId)->with('role')->search($request->value)->get();
+        return response()->json($result);
+    }
 }

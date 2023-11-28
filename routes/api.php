@@ -53,6 +53,7 @@ Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], function () 
     Route::post('/change-role', [\App\Http\Controllers\UserController::class, 'changeRole']);
     Route::post('/get-one', [\App\Http\Controllers\UserController::class, 'getOne']);
     Route::post('/update-user', [\App\Http\Controllers\UserController::class, 'updateUser']);
+    Route::post('/search', [\App\Http\Controllers\UserController::class, 'search']);
 });
 
 
