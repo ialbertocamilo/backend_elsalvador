@@ -71,13 +71,18 @@ class UserController extends Controller
 
     public function updateUser(Request $request)
     {
-        Role::enablePermission(Role::supervisor);
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
             'id' => 'required'
         ]);
+
+        if (auth()->user()->id==$request->id)
+            Role::enablePermission(Role::agent);
+        else
+            Role::enablePermission(Role::supervisor);
+
 
         if ($validator->fails()) {
             return response()->json($validator->messages(), 400);

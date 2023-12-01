@@ -22,7 +22,6 @@ class AuthController extends Controller
 
         if (Auth::attempt(['email' => $request->username, 'password' => $request->password])) {
             $user = Auth::user();
-            Log::debug("authenticated user -> " . $user);
             $token = $user->createToken('auth_token')->plainTextToken;
             if (!$user->active)
                 return response()->json(['message' => 'El usuario no está activo.'], 400);
