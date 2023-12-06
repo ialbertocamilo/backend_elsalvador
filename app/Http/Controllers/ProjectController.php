@@ -116,7 +116,12 @@ class ProjectController extends Controller
 
     public function saveFiles(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), ['project_id' => 'required', 'project_file' => 'required|file', 'key' => 'required']);
+        $validator = Validator::make($request->all(), [
+            'project_id' => 'required',
+            'project_file' => 'required|file|max:5120',
+            'key' => 'required', [
+                'project_file.max' => 'El tamaño máximo permitido para el archivo es de 5MB.',
+            ]]);
         if ($validator->fails()) return response()->json($validator->errors(), 400);
 
 
@@ -162,6 +167,22 @@ class ProjectController extends Controller
         return $this->orderFilters($request, $query);
     }
 
+    /**
+     * @param Request $request
+     * @param         $query
+     *
+     * @return JsonResponse
+     */
+    public function orderFilters(Request $request, $query): JsonResponse
+    {
+        if ($request->id_filter === 'true') $query->orderBy('id', 'DESC');
+        if ($request->created_at_filter === 'true') $query->orderBy('created_at', 'DESC');
+        if ($request->updated_at_filter === 'true') $query->orderBy('updated_at', 'DESC');
+        $result = $query->get()->all();
+
+        return response()->json($result);
+    }
+
     public function setStatus(Request $request)
     {
 //  inProgress: 0,
@@ -186,21 +207,5 @@ class ProjectController extends Controller
 
         $result = Project::find($request->project_id);
         return response()->json(['result' => (int)$result->status]);
-    }
-
-    /**
-     * @param Request $request
-     * @param         $query
-     *
-     * @return JsonResponse
-     */
-    public function orderFilters(Request $request, $query): JsonResponse
-    {
-        if ($request->id_filter === 'true') $query->orderBy('id', 'DESC');
-        if ($request->created_at_filter === 'true') $query->orderBy('created_at', 'DESC');
-        if ($request->updated_at_filter === 'true') $query->orderBy('updated_at', 'DESC');
-        $result = $query->get()->all();
-
-        return response()->json($result);
     }
 }
