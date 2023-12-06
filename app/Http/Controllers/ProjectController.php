@@ -119,9 +119,10 @@ class ProjectController extends Controller
         $validator = Validator::make($request->all(), [
             'project_id' => 'required',
             'project_file' => 'required|file|max:5120',
-            'key' => 'required', [
+            'key' => 'required'],
+            [
                 'project_file.max' => 'El tamaño máximo permitido para el archivo es de 5MB.',
-            ]]);
+            ]);
         if ($validator->fails()) return response()->json($validator->errors(), 400);
 
 
