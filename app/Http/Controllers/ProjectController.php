@@ -118,9 +118,10 @@ class ProjectController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'project_id' => 'required',
-            'project_file' => 'required|file|max:5120',
+            'project_file' => 'required|file|mimes:jpeg,png,gif,pdf|max:5120',
             'key' => 'required'],
             [
+                'project_file.mimes' => 'El archivo debe ser una imagen (JPEG, PNG, GIF) o un archivo PDF.',
                 'project_file.max' => 'El tamaño máximo permitido para el archivo es de 5MB.',
             ]);
         if ($validator->fails()) return response()->json($validator->errors(), 400);
