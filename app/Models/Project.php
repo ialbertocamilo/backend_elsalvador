@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+
 class Project extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
@@ -16,6 +17,7 @@ class Project extends Model implements HasMedia
     public const IN_REVISION = 1;
     public const APPROVED    = 2;
     public const DENIED      = 3;
+
 
     protected $guarded = [];
     protected $with    = ['data'];

@@ -19,11 +19,12 @@ class UserSeeder extends Seeder
         DB::table('users')->truncate();
 
         // Genera algunos usuarios de ejemplo
-        $users = [['name' => 'admin', 'email' => 'svg.z32@gmail.com',
+        $users = [['name' => 'admin', 'lastname' => 'admin', 'email' => 'svg.z32@gmail.com',
             'password' => Hash::make('12345678'),
             'role_id' => Role::supervisor,
             'active' => true
-        ], ['name' => 'Jane Smith',
+        ], ['name' => 'Jane ',
+            'lastname' => 'Smith',
             'email' => 'janesmith@example.com',
             'password' => Hash::make('password456'),
             'role_id' => Role::agent,

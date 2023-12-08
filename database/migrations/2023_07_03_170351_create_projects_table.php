@@ -28,7 +28,8 @@ return new class extends Migration {
             $table->string('offices')->nullable();
             $table->string('surface')->nullable();
             $table->string('extra')->nullable();
-            $table->boolean('is_public')->nullable();
+            $table->integer('building_type')->nullable();
+            $table->integer('building_classification')->nullable();
             $table->string('status')->default(0);
             $table->timestamps();
         });

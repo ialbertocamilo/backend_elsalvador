@@ -31,12 +31,14 @@ Route::apiResource('projects', ProjectController::class)->middleware('auth:sanct
 Route::group(['prefix' => 'projects', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/search', [\App\Http\Controllers\ProjectController::class, 'search']);
     Route::post('/get-data', [\App\Http\Controllers\ProjectController::class, 'getProjectData']);
+    Route::post('/get-all-data', [\App\Http\Controllers\ProjectController::class, 'getAllProjectData']);
     Route::post('/save-data', [\App\Http\Controllers\ProjectController::class, 'saveProjectData']);
     Route::post('/save-file', [\App\Http\Controllers\ProjectController::class, 'saveFiles']);
     Route::post('/get-files', [\App\Http\Controllers\ProjectController::class, 'getFiles']);
     Route::post('/download-file', [\App\Http\Controllers\ProjectController::class, 'downloadFile']);
     Route::post('/set-status', [\App\Http\Controllers\ProjectController::class, 'setStatus']);
     Route::post('/get-status', [\App\Http\Controllers\ProjectController::class, 'getStatus']);
+    Route::post('/report', [\App\Http\Controllers\ProjectController::class, 'report']);
 });
 
 Route::group(['prefix' => 'map', 'middleware' => 'auth:sanctum'], function () {

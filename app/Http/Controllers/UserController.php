@@ -13,7 +13,9 @@ class UserController extends Controller
     public function getAll()
     {
         $myId  = auth()->user()->id;
-        $users = User::whereNot('id', $myId)->with('role')->get();
+        $users = User::whereNot('id', $myId)->with('role')->with(['tokens'=>function ($query){
+            $query->orderBy('last_used_at','DESC')->first('last_used_at');
+        }])->get();
         return response()->json($users);
     }
 
@@ -110,7 +112,9 @@ class UserController extends Controller
     {
 
         $myId   = auth()->user()->id;
-        $result = User::whereNot('id', $myId)->with('role')->search($request->value)->get();
+        $result = User::whereNot('id', $myId)->with('role')->with(['tokens'=>function ($query){
+            $query->orderBy('updated_at','DESC')->first('updated_at');
+        }])->search($request->value)->get();
         return response()->json($result);
     }
 }
