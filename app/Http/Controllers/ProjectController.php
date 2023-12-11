@@ -307,13 +307,11 @@ class ProjectController extends Controller
             case 'system-buildings':
                 $year = $request->input('year'); // Obtener el año del request
 
-                $projectsByDepartment = Project::select('department', 'building_classification', DB::raw('count(*) as total_projects'))
+                $result = Project::select('department', 'building_classification', DB::raw('count(*) as total_projects'))
                     ->whereYear('created_at', $year)
                     ->groupBy('building_classification','department')
                     ->withOut('data')
                     ->get();
-
-                $result=$projectsByDepartment;
                 break;
 
             case 'user-buildings':
