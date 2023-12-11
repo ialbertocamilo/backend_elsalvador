@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BuildingClassification;
+use App\Enums\BuildingType;
 use App\Models\Data;
 use App\Models\Project;
 use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Enum;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProjectController extends Controller
@@ -29,29 +34,28 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
         Role::enablePermission(Role::agent);
-        $request->validate([
-            'project_name' => 'required',
-            'owner_name' => 'required',
-            'owner_lastname' => 'required',
-            'designer_name' => 'required',
-            'project_director' => 'required',
-            'department' => 'required',
-            'municipality' => 'required',
-            'address' => 'required',
+
+        $validator = Validator::make($request->all(), ['project_name' => 'required', 'owner_name' => 'required', 'owner_lastname' => 'required',
+            'designer_name' => 'required', 'project_director' => 'required', 'department' => 'required',
+            'municipality' => 'required', 'address' => 'required',
             'phone' => 'required',
             'profession' => 'required',
             'nationality' => 'required',
+            'building_classification' => ['required', new Enum(BuildingClassification::class)],
+            'building_type' => ['required', new Enum(BuildingType::class)]
         ]);
+
+        if ($validator->fails()) return response()->json($validator->errors(), 400);
+
         $project = Project::whereProjectName($request->project_name)->first();
-        if ($project)
-            return response()->json(['error' => 'Ya existe un proyecto con el mismo nombre'], 400);
+        if ($project) return response()->json(['error' => 'Ya existe un proyecto con el mismo nombre'], 400);
         $response = Auth::user()->projects()->create($request->all());
 
         return response()->json(['data' => $response], 201);
@@ -60,9 +64,9 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Project $project
+     * @param Project $project
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show(Project $project)
     {
@@ -72,27 +76,22 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Project      $project
+     * @param Request $request
+     * @param Project $project
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(Request $request, Project $project)
     {
 
-        $request->validate([
-            'project_name' => 'required',
-            'owner_name' => 'required',
-            'owner_lastname' => 'required',
-            'designer_name' => 'required',
-            'project_director' => 'required',
-            'department' => 'required',
-            'municipality' => 'required',
-            'address' => 'required',
+        $request->validate(['project_name' => 'required', 'owner_name' => 'required', 'owner_lastname' => 'required',
+            'designer_name' => 'required', 'project_director' => 'required', 'department' => 'required',
+            'municipality' => 'required', 'address' => 'required',
             'phone' => 'required',
             'profession' => 'required',
             'nationality' => 'required',
-        ]);
+            'building_classification' => ['required', new Enum(BuildingClassification::class)],
+            'building_type' => ['required', new Enum(BuildingType::class)]]);
 
         $project->update($request->all());
 
@@ -102,9 +101,9 @@ class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Project $project
+     * @param Project $project
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(Project $project)
     {
@@ -116,48 +115,52 @@ class ProjectController extends Controller
     public function getProjectData(Request $request)
     {
 
-        $validator = Validator::make($request->all(), [
-            'project_id' => 'required',
-            'key' => 'required|string'
-        ]);
-        if ($validator->fails())
-            return response()->json($validator->errors(), 400);
+        $validator = Validator::make($request->all(), ['project_id' => 'required', 'key' => 'required|string']);
+        if ($validator->fails()) return response()->json($validator->errors(), 400);
 
         $result = Data::whereProjectId($request->project_id)->where(['key' => $request->key])->first();
-        if ($result)
-            $result->payload = json_decode($result->payload);
+        if ($result) $result->payload = json_decode($result->payload);
         return response()->json($result);
+
+    }
+
+    public function getAllProjectData(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), ['project_id' => 'required']);
+        if ($validator->fails()) return response()->json($validator->errors(), 400);
+        $project = Project::find($request->project_id, ['id', 'building_classification']);
+        foreach ($project->data as $value) {
+            $value->payload = json_decode($value->payload);
+        }
+        return response()->json($project);
 
     }
 
     public function saveProjectData(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'project_id' => 'required',
-            'key' => 'required|string',
-            'payload' => 'required'
-        ]);
-        if ($validator->fails())
-            return response()->json($validator->errors(), 400);
+        $validator = Validator::make($request->all(), ['project_id' => 'required', 'key' => 'required|string', 'payload' => 'required']);
+        if ($validator->fails()) return response()->json($validator->errors(), 400);
 
         $result = Data::where(['key' => $request->key, 'project_id' => $request->project_id])->first();
-        if (!$result)
-            $result = Data::create($request->only('project_id', 'key'));
+        if (!$result) $result = Data::create($request->only('project_id', 'key'));
 
         $result->payload = json_encode($request->payload);
         $result->save();
         return response()->json($result);
     }
 
-    public function saveFiles(Request $request): \Illuminate\Http\JsonResponse
+    public function saveFiles(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'project_id' => 'required',
-            'project_file' => 'required|file',
-            'key' => 'required'
-        ]);
-        if ($validator->fails())
-            return response()->json($validator->errors(), 400);
+            'project_file' => 'required|file|mimes:jpeg,png,gif,pdf|max:5120',
+            'key' => 'required'],
+            [
+                'project_file.mimes' => 'El archivo debe ser una imagen (JPEG, PNG, GIF) o un archivo PDF.',
+                'project_file.max' => 'El tamaño máximo permitido para el archivo es de 5MB.',
+            ]);
+        if ($validator->fails()) return response()->json($validator->errors(), 400);
 
 
         $file = $request->file('project_file');
@@ -170,8 +173,7 @@ class ProjectController extends Controller
                 $media->delete();
             });
         }
-        $result = $project->addMedia($file)
-            ->toMediaCollection($key);
+        $result = $project->addMedia($file)->toMediaCollection($key);
         return response()->json($result);
     }
 
@@ -192,12 +194,30 @@ class ProjectController extends Controller
 
     public function search(Request $request)
     {
-        $user=\auth()->user();
-        if ($user->role_id==Role::supervisor){
-            $result = Project::whereNot('status', Project::IN_PROGRESS)->search($request->value)->get()->all();
-            return response()->json($result);
+        $user = \auth()->user();
+        if ($user->role_id == Role::supervisor) {
+            $query = Project::whereNot('status', Project::IN_PROGRESS);
+            $query->search($request->value);
+            return $this->orderFilters($request, $query);
         }
-        $result = $user->projects()->search($request->value)->get()->all();
+
+        $query = $user->projects()->search($request->value);
+        return $this->orderFilters($request, $query);
+    }
+
+    /**
+     * @param Request $request
+     * @param         $query
+     *
+     * @return JsonResponse
+     */
+    public function orderFilters(Request $request, $query): JsonResponse
+    {
+        if ($request->id_filter === 'true') $query->orderBy('id', 'DESC');
+        if ($request->created_at_filter === 'true') $query->orderBy('created_at', 'DESC');
+        if ($request->updated_at_filter === 'true') $query->orderBy('updated_at', 'DESC');
+        $result = $query->get()->all();
+
         return response()->json($result);
     }
 
@@ -208,12 +228,8 @@ class ProjectController extends Controller
 //	accepted: 2,
 //	denied: 3,
 
-        $validator = Validator::make($request->all(), [
-            'project_id' => 'required',
-            'status' => 'required'
-        ]);
-        if ($validator->fails())
-            return response()->json($validator->errors(), 400);
+        $validator = Validator::make($request->all(), ['project_id' => 'required', 'status' => 'required']);
+        if ($validator->fails()) return response()->json($validator->errors(), 400);
 
         $result         = Project::find($request->project_id);
         $result->status = $request->status;
@@ -224,11 +240,8 @@ class ProjectController extends Controller
     public function getStatus(Request $request)
     {
 
-        $validator = Validator::make($request->all(), [
-            'project_id' => 'required'
-        ]);
-        if ($validator->fails())
-            return response()->json($validator->errors(), 400);
+        $validator = Validator::make($request->all(), ['project_id' => 'required']);
+        if ($validator->fails()) return response()->json($validator->errors(), 400);
 
         $result = Project::find($request->project_id);
         return response()->json(['result' => (int)$result->status]);
@@ -243,41 +256,43 @@ class ProjectController extends Controller
         $result = null;
         switch ($type) {
             case 'design-compliances':
-                $approved         = Project::whereStatus(Project::APPROVED)->get()->all();
-                $households       = 0;
-                $deniedHouseholds = 0;
-                $offices          = 0;
-                $deniedOffices    = 0;
-                $tertiary         = 0;
-                $deniedTertiary   = 0;
-                foreach ($approved as $value) {
-                    switch ($value->building_classification) {
-                        case BuildingClassification::households->value:
-                            $households++;
-                            break;
-                        case BuildingClassification::offices->value:
-                            $offices++;
-                            break;
+                $approved=Project::whereStatus(Project::APPROVED)->get()->all();
+                $households=0;
+                $deniedHouseholds=0;
+                $offices=0;
+                $deniedOffices=0;
+                $tertiary=0;
+                $deniedTertiary=0;
+                foreach ($approved as $value){
+                    switch ($value->building_classification){
+                        case BuildingClassification::households->value:$households++;break;
+                        case BuildingClassification::offices->value:$offices++;break;
                         case BuildingClassification::tertiary->value:
-                            $tertiary++;
-                            break;
+                            $tertiary++;break;
                     }
                 }
-                $denied = Project::whereStatus(Project::DENIED)->get();
-                foreach ($denied as $value) {
-                    switch ($value->building_classification) {
-                        case BuildingClassification::households->value:
-                            $deniedHouseholds++;
-                            break;
-                        case BuildingClassification::offices->value:
-                            $deniedOffices++;
-                            break;
+                $denied=Project::whereStatus(Project::DENIED)->get();
+                foreach ($denied as $value){
+                    switch ($value->building_classification){
+                        case BuildingClassification::households->value:$deniedHouseholds++;break;
+                        case BuildingClassification::offices->value:$deniedOffices++;break;
                         case BuildingClassification::tertiary->value:
-                            $deniedTertiary++;
-                            break;
+                            $deniedTertiary++;break;
                     }
                 }
-                $result = ['approved' => ['households' => $households, 'offices' => $offices, 'tertiary' => $tertiary, 'total' => count($approved)], 'denied' => ['households' => $deniedHouseholds, 'offices' => $deniedOffices, 'tertiary' => $deniedTertiary, 'total' => count($denied)]
+                $result = [
+                    'approved' => [
+                        'households' => $households,
+                        'offices' => $offices,
+                        'tertiary' => $tertiary,
+                        'total' => count($approved)
+                    ],
+                    'denied' => [
+                        'households' => $deniedHouseholds,
+                        'offices' => $deniedOffices,
+                        'tertiary' => $deniedTertiary,
+                        'total' => count($denied)
+                    ]
 
                 ];
                 break;
@@ -286,33 +301,14 @@ class ProjectController extends Controller
                 break;
 
             case 'system-buildings':
-                $year                                    = $request->year;
-                $result = Project::select(
-                    DB::raw('YEAR(created_at) as year'),
-                    'department',
-                    'building_classification',
-                    DB::raw('
-                CASE
-                    WHEN building_classification = 0 THEN "Viviendas"
-                    WHEN building_classification = 1 THEN "Oficinas"
-                    WHEN building_classification = 2 THEN "Terciarios"
-                    ELSE "Otro"
-                END as classification'),
-                    DB::raw('COUNT(*) as project_count')
-                )
-                    ->when($year, function ($query) use ($year) {
-                        return $query->whereYear('created_at', $year);
-                    })
-                    ->groupBy('year', 'department', 'classification','building_classification')
-                    ->orderBy('year', 'asc')
-                    ->orderBy('department', 'asc')
-                    ->orderBy('classification', 'asc')
-                    ->get();
                 break;
 
             case 'user-buildings':
-                $users  = User::whereNot('id', \auth()->user()->id)->withCount('projects')->orderBy('projects_count', 'desc')->limit(10)->get();
-                $result = ['users' => $users, 'total' => Project::all()->count()];
+                $users=User::whereNot('id',\auth()->user()->id)->withCount('projects')->orderBy('projects_count', 'desc')->limit(10)->get();
+                $result=[
+                  'users'=>$users,
+                  'total'=>Project::all()->count()
+                ];
                 break;
 
         }

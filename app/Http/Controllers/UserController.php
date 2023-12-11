@@ -13,7 +13,9 @@ class UserController extends Controller
     public function getAll()
     {
         $myId  = auth()->user()->id;
-        $users = User::whereNot('id', $myId)->with('role')->get();
+        $users = User::whereNot('id', $myId)->with('role')->with(['tokens'=>function ($query){
+            $query->orderBy('last_used_at','DESC')->first('last_used_at');
+        }])->get();
         return response()->json($users);
     }
 
@@ -71,13 +73,18 @@ class UserController extends Controller
 
     public function updateUser(Request $request)
     {
-        Role::enablePermission(Role::supervisor);
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
             'id' => 'required'
         ]);
+
+        if (auth()->user()->id==$request->id)
+            Role::enablePermission(Role::agent);
+        else
+            Role::enablePermission(Role::supervisor);
+
 
         if ($validator->fails()) {
             return response()->json($validator->messages(), 400);
@@ -99,5 +106,15 @@ class UserController extends Controller
 
         // Responder con JSON
         return response()->json(['message' => 'Registro exitoso', 'data' => $user->name . ' ' . $user->lastname], 201);
+    }
+
+    public function search(Request $request)
+    {
+
+        $myId   = auth()->user()->id;
+        $result = User::whereNot('id', $myId)->with('role')->with(['tokens'=>function ($query){
+            $query->orderBy('updated_at','DESC')->first('updated_at');
+        }])->search($request->value)->get();
+        return response()->json($result);
     }
 }

@@ -1,0 +1,128 @@
+swagger: "2.0"
+info:
+  description: "Esta es una API de ejemplo basada en el archivo api.txt proporcionado."
+  version: "1.0.0"
+  title: "API de ejemplo"
+host: "localhost:8000"
+basePath: "/api"
+schemes:
+  - "http"
+  - "https"
+
+paths:
+  /hello:
+    get:
+      summary: "Returns server timestamp"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Successful response with timestamp"
+          schema:
+            $ref: "#/definitions/ServerTimestamp"
+
+  /login:
+    post:
+      summary: "User login endpoint"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "User credentials"
+          required: true
+          schema:
+            $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: "User successfully authenticated"
+          schema:
+            $ref: "#/definitions/AuthResponse"
+
+  /logout:
+    post:
+      summary: "User logout endpoint"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "User successfully logged out"
+
+  /verify-token:
+    get:
+      summary: "Token verification endpoint"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Token successfully verified"
+
+  /register:
+    post:
+      summary: "User registration endpoint"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "User registration data"
+          required: true
+          schema:
+            $ref: "#/definitions/RegistrationData"
+      responses:
+        200:
+          description: "User successfully registered"
+
+definitions:
+  ServerTimestamp:
+    type: "object"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+
+  LoginCredentials:
+    type: "object"
+    required:
+      - "username"
+      - "password"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+
+  AuthResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+
+  RegistrationData:
+    type: "object"
+    required:
+      - "username"
+      - "password"
+      - "email"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+      email:
+        type: "string"
+
+# Agregar modelos de datos adicionales aqui...
+
+securityDefinitions:
+  Bearer:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+
+security:
+  - Bearer: []
