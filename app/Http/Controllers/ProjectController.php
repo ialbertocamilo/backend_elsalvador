@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -231,5 +232,91 @@ class ProjectController extends Controller
 
         $result = Project::find($request->project_id);
         return response()->json(['result' => (int)$result->status]);
+    }
+
+    public function report(Request $request)
+    {
+        $validator = Validator::make($request->all(), ['type' => 'required']);
+        if ($validator->fails()) return response()->json($validator->errors(), 400);
+
+        $type   = $request->type;
+        $result = null;
+        switch ($type) {
+            case 'design-compliances':
+                $approved         = Project::whereStatus(Project::APPROVED)->get()->all();
+                $households       = 0;
+                $deniedHouseholds = 0;
+                $offices          = 0;
+                $deniedOffices    = 0;
+                $tertiary         = 0;
+                $deniedTertiary   = 0;
+                foreach ($approved as $value) {
+                    switch ($value->building_classification) {
+                        case BuildingClassification::households->value:
+                            $households++;
+                            break;
+                        case BuildingClassification::offices->value:
+                            $offices++;
+                            break;
+                        case BuildingClassification::tertiary->value:
+                            $tertiary++;
+                            break;
+                    }
+                }
+                $denied = Project::whereStatus(Project::DENIED)->get();
+                foreach ($denied as $value) {
+                    switch ($value->building_classification) {
+                        case BuildingClassification::households->value:
+                            $deniedHouseholds++;
+                            break;
+                        case BuildingClassification::offices->value:
+                            $deniedOffices++;
+                            break;
+                        case BuildingClassification::tertiary->value:
+                            $deniedTertiary++;
+                            break;
+                    }
+                }
+                $result = ['approved' => ['households' => $households, 'offices' => $offices, 'tertiary' => $tertiary, 'total' => count($approved)], 'denied' => ['households' => $deniedHouseholds, 'offices' => $deniedOffices, 'tertiary' => $deniedTertiary, 'total' => count($denied)]
+
+                ];
+                break;
+            case 'buildings-parameters':
+
+                break;
+
+            case 'system-buildings':
+                $year                                    = $request->year;
+                $result = Project::select(
+                    DB::raw('YEAR(created_at) as year'),
+                    'department',
+                    'building_classification',
+                    DB::raw('
+                CASE
+                    WHEN building_classification = 0 THEN "Viviendas"
+                    WHEN building_classification = 1 THEN "Oficinas"
+                    WHEN building_classification = 2 THEN "Terciarios"
+                    ELSE "Otro"
+                END as classification'),
+                    DB::raw('COUNT(*) as project_count')
+                )
+                    ->when($year, function ($query) use ($year) {
+                        return $query->whereYear('created_at', $year);
+                    })
+                    ->groupBy('year', 'department', 'classification','building_classification')
+                    ->orderBy('year', 'asc')
+                    ->orderBy('department', 'asc')
+                    ->orderBy('classification', 'asc')
+                    ->get();
+                break;
+
+            case 'user-buildings':
+                $users  = User::whereNot('id', \auth()->user()->id)->withCount('projects')->orderBy('projects_count', 'desc')->limit(10)->get();
+                $result = ['users' => $users, 'total' => Project::all()->count()];
+                break;
+
+        }
+
+        return \response()->json($result);
     }
 }
