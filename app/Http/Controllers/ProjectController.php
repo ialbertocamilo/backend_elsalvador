@@ -12,12 +12,16 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Enum;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+
 class ProjectController extends Controller
 {
+
     public function index()
     {
         $projects = Project::all();
@@ -301,6 +305,15 @@ class ProjectController extends Controller
                 break;
 
             case 'system-buildings':
+                $year = $request->input('year'); // Obtener el año del request
+
+                $projectsByDepartment = Project::select('department', 'building_classification', DB::raw('count(*) as total_projects'))
+                    ->whereYear('created_at', $year)
+                    ->groupBy('building_classification','department')
+                    ->withOut('data')
+                    ->get();
+
+                $result=$projectsByDepartment;
                 break;
 
             case 'user-buildings':

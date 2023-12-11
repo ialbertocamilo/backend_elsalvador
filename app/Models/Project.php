@@ -13,6 +13,7 @@ class Project extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
+    public const numberOfDepartments=12;
     public const IN_PROGRESS = 0;
     public const IN_REVISION = 1;
     public const APPROVED    = 2;
