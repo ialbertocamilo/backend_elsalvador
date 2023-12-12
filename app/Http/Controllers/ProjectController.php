@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Enum;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -260,28 +259,38 @@ class ProjectController extends Controller
         $result = null;
         switch ($type) {
             case 'design-compliances':
-                $approved=Project::whereStatus(Project::APPROVED)->get()->all();
-                $households=0;
-                $deniedHouseholds=0;
-                $offices=0;
-                $deniedOffices=0;
-                $tertiary=0;
-                $deniedTertiary=0;
-                foreach ($approved as $value){
-                    switch ($value->building_classification){
-                        case BuildingClassification::households->value:$households++;break;
-                        case BuildingClassification::offices->value:$offices++;break;
+                $approved         = Project::whereStatus(Project::APPROVED)->get()->all();
+                $households       = 0;
+                $deniedHouseholds = 0;
+                $offices          = 0;
+                $deniedOffices    = 0;
+                $tertiary         = 0;
+                $deniedTertiary   = 0;
+                foreach ($approved as $value) {
+                    switch ($value->building_classification) {
+                        case BuildingClassification::households->value:
+                            $households++;
+                            break;
+                        case BuildingClassification::offices->value:
+                            $offices++;
+                            break;
                         case BuildingClassification::tertiary->value:
-                            $tertiary++;break;
+                            $tertiary++;
+                            break;
                     }
                 }
-                $denied=Project::whereStatus(Project::DENIED)->get();
-                foreach ($denied as $value){
-                    switch ($value->building_classification){
-                        case BuildingClassification::households->value:$deniedHouseholds++;break;
-                        case BuildingClassification::offices->value:$deniedOffices++;break;
+                $denied = Project::whereStatus(Project::DENIED)->get();
+                foreach ($denied as $value) {
+                    switch ($value->building_classification) {
+                        case BuildingClassification::households->value:
+                            $deniedHouseholds++;
+                            break;
+                        case BuildingClassification::offices->value:
+                            $deniedOffices++;
+                            break;
                         case BuildingClassification::tertiary->value:
-                            $deniedTertiary++;break;
+                            $deniedTertiary++;
+                            break;
                     }
                 }
                 $result = [
@@ -297,11 +306,21 @@ class ProjectController extends Controller
                         'tertiary' => $deniedTertiary,
                         'total' => count($denied)
                     ]
-
                 ];
                 break;
             case 'buildings-parameters':
 
+                $result                  = [
+                    ['name' => 'Viviendas',
+                        'type' => 'column',
+                        'data' => Data::calculateDataByAverageType(BuildingClassification::households, $request)],
+                    ['name' => 'Oficinas',
+                        'type' => 'column',
+                        'data' => Data::calculateDataByAverageType(BuildingClassification::offices, $request)],
+                    ['name' => 'Terciarios',
+                        'type' => 'column',
+                        'data' => Data::calculateDataByAverageType(BuildingClassification::tertiary, $request)],
+                ];
                 break;
 
             case 'system-buildings':
@@ -309,16 +328,16 @@ class ProjectController extends Controller
 
                 $result = Project::select('department', 'building_classification', DB::raw('count(*) as total_projects'))
                     ->whereYear('created_at', $year)
-                    ->groupBy('building_classification','department')
+                    ->groupBy('building_classification', 'department')
                     ->withOut('data')
                     ->get();
                 break;
 
             case 'user-buildings':
-                $users=User::whereNot('id',\auth()->user()->id)->withCount('projects')->orderBy('projects_count', 'desc')->limit(10)->get();
-                $result=[
-                  'users'=>$users,
-                  'total'=>Project::all()->count()
+                $users  = User::whereNot('id', \auth()->user()->id)->withCount('projects')->orderBy('projects_count', 'desc')->limit(10)->get();
+                $result = [
+                    'users' => $users,
+                    'total' => Project::all()->count()
                 ];
                 break;
 
