@@ -32,4 +32,10 @@ class Role extends Model
         if ($role != $user->role_id)
             throw new PermissionException('No cuentas con los permisos suficientes para realizar esta operación.');
     }
+
+    static function canModify(bool $condition){
+        if (!$condition)
+            throw new PermissionException('No cuentas con los permisos suficientes para realizar esta operación.');
+        return true;
+    }
 }

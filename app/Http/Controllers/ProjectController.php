@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\BuildingClassification;
 use App\Enums\BuildingType;
+use App\Exceptions\PermissionException;
 use App\Http\Resources\BuildingParametersReportResource;
 use App\Http\Resources\BuildingsBySystemReportResource;
 use App\Http\Resources\BuildingsByUserResource;
@@ -77,6 +78,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        Role::canModify($project->user()->value('id')==\auth()->id() || auth()->user()->role_id==Role::supervisor);
         return response()->json($project);
     }
 
@@ -87,10 +89,11 @@ class ProjectController extends Controller
      * @param Project $project
      *
      * @return JsonResponse
+     * @throws PermissionException
      */
     public function update(Request $request, Project $project)
     {
-
+        Role::canModify($project->user()->value('id')==\auth()->id() || auth()->user()->role_id==Role::supervisor);
         $request->validate(['project_name' => 'required', 'owner_name' => 'required', 'owner_lastname' => 'required',
             'designer_name' => 'required', 'project_director' => 'required', 'department' => 'required',
             'municipality' => 'required', 'address' => 'required',
@@ -257,6 +260,8 @@ class ProjectController extends Controller
 
     public function report(Request $request)
     {
+
+        Role::enablePermission(Role::supervisor);
         $validator = Validator::make($request->all(), ['type' => 'required']);
         if ($validator->fails()) return response()->json($validator->errors(), 400);
 
@@ -354,6 +359,7 @@ class ProjectController extends Controller
 
     public function reportExcel(Request $request)
     {
+        Role::enablePermission(Role::supervisor);
 
         $type = $request->type;
         $year = $request->year;

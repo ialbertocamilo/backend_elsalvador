@@ -44,12 +44,20 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
 
+    public function logoutAll(Request $request)
+    {
+        Role::canModify(\auth()->user()->id==$request->user_id || \auth()->user()->role_id==Role::supervisor);
+        $user = User::find($request->user_id);
+        $user->tokens()->delete();
+        return response()->json(['message' => 'Logged out successfully'], 200);
+    }
+
     public function verify(Request $request)
     {
         $user = $request->user();
 
-        $auth=Str::remove('Bearer ',$request->header('authorization'));
-        return response()->json(['token' =>$auth,
+        $auth = Str::remove('Bearer ', $request->header('authorization'));
+        return response()->json(['token' => $auth,
             'name' => $user->name,
             'lastname' => $user->lastname,
             'id' => $user->id,
