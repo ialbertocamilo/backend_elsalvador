@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BuildingClassification;
+use App\Enums\DataKeyType;
 use App\Http\Resources\DashboardResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,15 +40,16 @@ class Data extends Model
 
     static function calculateDataByAverageType(BuildingClassification $type, \Illuminate\Http\Request $request): array
     {
-        $result = Project::where('building_classification', $type)->whereYear('created_at',$request->year)->where('status', Project::APPROVED)->with('data', function ($query) {
+        $result = Project::where('building_classification', $type)->whereYear('created_at', $request->year)
+            ->where('status', Project::APPROVED)->with('data', function ($query) {
             return $query->where('key', 'package');
         })->get();
         $result = (array)DashboardResource::collection($result)->toArray($request);
 
-        $numberOfArrays   = count($result);
-        if (isset($result[0])){
+        $numberOfArrays = count($result);
+        if (isset($result[0])) {
             $numberOfElements = count($result[0]); // Suponiendo que todos los arrays tienen la misma longitud
-            $averages = [];
+            $averages         = [];
             for ($i = 0; $i < $numberOfElements; $i++) {
                 $sum = 0;
                 foreach ($result as $subArray) {
@@ -58,6 +60,38 @@ class Data extends Model
             return $averages;
         }
         return [];
+    }
+
+    static function getOriginString(mixed $originId)
+    {
+        if (!$originId) return '-';
+        $jsonData = Data::where('key', DataKeyType::OriginList)->first()->payload;
+        $objects  = json_decode($jsonData, true);
+        $searched = collect($objects)->where('value', (int)$originId)->first();
+        if ($searched)
+            return $searched['text'];
+        return null;
+    }
+
+    static function getDepartmentString(mixed $departmentId){
+
+        if (!$departmentId) return '-';
+        $jsonData = Data::where('key', DataKeyType::DepartmentList)->first()->payload;
+        $objects  = json_decode($jsonData, true);
+        $searched = collect($objects)->where('id', (int)$departmentId)->first();
+        if ($searched)
+            return $searched['department'];
+        return null;
+    }
+    static function getMunicipalityString(mixed $departmentId,mixed $municipalityId){
+
+        if (!$departmentId && !$municipalityId) return '-';
+        $jsonData = Data::where('key', DataKeyType::DepartmentList)->first()->payload;
+        $objects  = json_decode($jsonData, true);
+        $searched = collect($objects)->where('id', (int)$departmentId)->first();
+        if ($searched)
+            return $searched['municipality'][$municipalityId];
+        return null;
     }
 
     function projects()

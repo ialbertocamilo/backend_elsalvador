@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Enums\BuildingClassification;
 use App\Enums\BuildingType;
+use App\Http\Resources\BuildingParametersReportResource;
+use App\Http\Resources\BuildingsBySystemReportResource;
+use App\Http\Resources\BuildingsByUserResource;
+use App\Http\Resources\DesignReportResource;
 use App\Models\Data;
 use App\Models\Project;
 use App\Models\Role;
@@ -234,8 +238,9 @@ class ProjectController extends Controller
         $validator = Validator::make($request->all(), ['project_id' => 'required', 'status' => 'required']);
         if ($validator->fails()) return response()->json($validator->errors(), 400);
 
-        $result         = Project::find($request->project_id);
-        $result->status = $request->status;
+        $result              = Project::find($request->project_id);
+        $result->status      = $request->status;
+        $result->reviewer_id = auth()->user()->id;
         $result->save();
         return response()->json($result);
     }
@@ -256,10 +261,11 @@ class ProjectController extends Controller
         if ($validator->fails()) return response()->json($validator->errors(), 400);
 
         $type   = $request->type;
+        $year   = $request->year;
         $result = null;
         switch ($type) {
             case 'design-compliances':
-                $approved         = Project::whereStatus(Project::APPROVED)->get()->all();
+                $approved         = Project::whereStatus(Project::APPROVED)->whereYear('created_at', $year)->get()->all();
                 $households       = 0;
                 $deniedHouseholds = 0;
                 $offices          = 0;
@@ -279,7 +285,7 @@ class ProjectController extends Controller
                             break;
                     }
                 }
-                $denied = Project::whereStatus(Project::DENIED)->get();
+                $denied = Project::whereStatus(Project::DENIED)->whereYear('created_at', $year)->get();
                 foreach ($denied as $value) {
                     switch ($value->building_classification) {
                         case BuildingClassification::households->value:
@@ -308,9 +314,9 @@ class ProjectController extends Controller
                     ]
                 ];
                 break;
-            case 'buildings-parameters':
+            case 'buildings-parameters': // p0043C
 
-                $result                  = [
+                $result = [
                     ['name' => 'Viviendas',
                         'type' => 'column',
                         'data' => Data::calculateDataByAverageType(BuildingClassification::households, $request)],
@@ -344,5 +350,38 @@ class ProjectController extends Controller
         }
 
         return \response()->json($result);
+    }
+
+    public function reportExcel(Request $request)
+    {
+
+        $type = $request->type;
+        $year = $request->year;
+
+        $result = ['message' => 'error type'];
+        switch ($type) {
+            case 'user-buildings':// p0043A
+                $topUsers = User::withCount('projects') // Contar la cantidad de proyectos por usuario
+                ->orderByDesc('projects_count')
+                    ->orderByDesc('created_at')
+                    ->limit(10)
+                    ->get();
+                $result   = Project::whereIn('user_id', $topUsers->pluck('id'))->orderBy('user_id', 'DESC')->get();
+                $result   = BuildingsByUserResource::collection($result)->toArray($request);
+                break;
+            case 'system-buildings':// p0043B
+                $result = Project::whereYear('created_at', $year)->get();
+                $result = BuildingsBySystemReportResource::collection($result)->toArray($request);
+                break;
+            case 'buildings-parameters': //p0043C
+                $result = Project::where('status', Project::APPROVED)->whereYear('created_at', $year)->get();
+                $result = BuildingParametersReportResource::collection($result)->toArray($request);
+                break;
+            case 'design-compliances':// p0043D
+                $result = Project::where('status', Project::APPROVED)->orWhere('status', Project::DENIED)->whereYear('created_at', $year)->get();
+                $result = DesignReportResource::collection($result)->toArray($request);
+                break;
+        }
+        return $result;
     }
 }

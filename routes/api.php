@@ -39,6 +39,7 @@ Route::group(['prefix' => 'projects', 'middleware' => 'auth:sanctum'], function 
     Route::post('/set-status', [\App\Http\Controllers\ProjectController::class, 'setStatus']);
     Route::post('/get-status', [\App\Http\Controllers\ProjectController::class, 'getStatus']);
     Route::post('/report', [\App\Http\Controllers\ProjectController::class, 'report']);
+    Route::post('/report-excel', [\App\Http\Controllers\ProjectController::class, 'reportExcel']);
 });
 
 Route::group(['prefix' => 'map', 'middleware' => 'auth:sanctum'], function () {
@@ -57,6 +58,3 @@ Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], function () 
     Route::post('/update-user', [\App\Http\Controllers\UserController::class, 'updateUser']);
     Route::post('/search', [\App\Http\Controllers\UserController::class, 'search']);
 });
-
-
-//Route::mediaLibrary();

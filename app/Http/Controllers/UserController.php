@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\PermissionException;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -21,7 +22,6 @@ class UserController extends Controller
 
     public function getOne(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'user_id' => 'required'
         ]);
@@ -71,6 +71,9 @@ class UserController extends Controller
         return response()->json(['message' => 'No se pudo actualizar, el usuario no existe.'], 400);
     }
 
+    /**
+     * @throws PermissionException
+     */
     public function updateUser(Request $request)
     {
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
@@ -80,10 +83,8 @@ class UserController extends Controller
             'id' => 'required'
         ]);
 
-        if (auth()->user()->id==$request->id)
-            Role::enablePermission(Role::agent);
-        else
-            Role::enablePermission(Role::supervisor);
+        if (auth()->user()->id!=$request->id){
+            Role::enablePermission(Role::supervisor);}
 
 
         if ($validator->fails()) {

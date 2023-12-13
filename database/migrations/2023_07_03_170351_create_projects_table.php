@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(User::class);
             $table->string('project_name');
+            $table->foreignId('reviewer_id')->nullable();
             $table->string('owner_name');
             $table->string('owner_lastname');
             $table->string('profession')->nullable();
