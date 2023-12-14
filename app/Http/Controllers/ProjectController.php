@@ -345,7 +345,7 @@ class ProjectController extends Controller
                 break;
 
             case 'user-buildings':
-                $users  = User::whereNot('id', \auth()->user()->id)->whereYear('created_at',$year)->withCount('projects')->orderBy('projects_count', 'desc')->limit(10)->get();
+                $users  = User::whereYear('created_at',$year)->withCount('projects')->orderBy('projects_count', 'desc')->limit(10)->get();
                 $result = [
                     'users' => $users,
                     'total' => Project::all()->count()
