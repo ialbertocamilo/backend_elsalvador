@@ -59,7 +59,7 @@ class Data extends Model
             }
             return $averages;
         }
-        return [];
+        return [0];
     }
 
     static function getOriginString(mixed $originId)
