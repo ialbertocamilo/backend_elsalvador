@@ -345,7 +345,7 @@ class ProjectController extends Controller
                 break;
 
             case 'user-buildings':
-                $users  = User::whereYear('created_at',$year)->withCount('projects')->orderBy('projects_count', 'desc')->limit(10)->get();
+                $users  = User::whereNot('id', \auth()->user()->id)->where('role_id',Role::agent)->whereYear('created_at',$year)->withCount('projects')->orderBy('projects_count', 'desc')->limit(10)->get();
                 $result = [
                     'users' => $users,
                     'total' => Project::all()->count()
@@ -367,7 +367,8 @@ class ProjectController extends Controller
         $result = ['message' => 'error type'];
         switch ($type) {
             case 'user-buildings':// p0043A
-                $topUsers = User::withCount('projects') // Contar la cantidad de proyectos por usuario
+                $topUsers = User::withCount('projects') // Contar la cantidad de proyectos por usuarios
+                ->where('role_id',Role::agent)
                 ->orderByDesc('projects_count')
                     ->orderByDesc('created_at')
                     ->limit(10)
